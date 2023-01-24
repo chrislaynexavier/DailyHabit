@@ -1,19 +1,24 @@
 import { DailyHabit } from "../src/domain/entity/DailyHabit"
 import { Habit } from "../src/domain/entity/Habit"
 import { User } from "../src/domain/entity/User"
+import { Group } from"../src/domain/entity/Group"
 
 describe('daily Habit', () => {
   let newDailyHabit!: DailyHabit
   let date = new Date()
   const habitName = 'drink water'
-  let habit = new Habit(habitName)
+  let habit !: Habit
   let newUser: User
   let email = "chris@gmail.com"
   let password = "123456"
+  let newGroup!: Group
+  let nameGroup: string = 'family'
 
   beforeEach(() => {
     newDailyHabit = new DailyHabit(date)
     newUser = new User(email, password)
+    newGroup = new Group(nameGroup)
+    habit = new Habit(habitName)
   })
 
   it('should have a date', () => {
@@ -49,5 +54,10 @@ describe('daily Habit', () => {
   it('should have the user', () => {
     newUser.addDailyHabit(newDailyHabit)
     expect(newDailyHabit.user).toBe(newUser)
+  })
+
+  it('should have a group', () => {
+    newGroup.addDailyHabit(newDailyHabit, habit)
+    expect(newDailyHabit.group).toBe(newGroup)
   })
 })

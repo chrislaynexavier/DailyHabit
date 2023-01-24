@@ -48,10 +48,13 @@ describe('group', () => {
     })
 
     it('should have a daily habit when add', () => {
-
+        newGroup.addHabit(habit1)
+        newGroup.addDailyHabit(newDailyHabit, habit1)
+        expect(newGroup.dailiesHabits).toContain(newDailyHabit)
     })
 
-    it('should not add a daily habit without a habit parent', () => {
-        
+    it('should add a daily habit with a habit parent', () => {
+        newGroup.addDailyHabit(newDailyHabit, habit1)
+        expect(newDailyHabit.habit.name).toBe(habitName1)
     })
 })
