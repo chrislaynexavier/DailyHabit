@@ -24,8 +24,7 @@ const connectDb = async () => {
 app.use(express.json())
 
 app.post('/habit', async (req:any, res:any) => {
-    const nameHabit = req.body.name
-    await client.query(`insert into habits (name) values ($1)`,[req.body.name])
+    await client.query(`insert into habits (name) values ($1)`, [req.body.name])
     res.json({req: 'habit added sucessfully'})
     await client.end()
 })
@@ -35,6 +34,21 @@ app.get('/habit', async (req:any, res:any) => {
     res.json(dbResponse.rows)
     await client.end()
     
+})
+
+app.post('/dailyhabit', async (req:any, res: any) => {
+    await client.query('insert into dailyHabit (dailyHabit_Date) values ($1)', [req.body.date])
+    res.json({req: 'daily habit added sucessfully'})
+    await client.end()
+})
+
+
+app.get('/dailyhabit', async (req:any, res:any) => {
+    const dbResponse = await client.query('select * from dailyHabit')
+    res.json(dbResponse.rows)
+    console.log(dbResponse.rows)
+    console.log('teste')
+    await client.end()
 })
 
 app.listen(2000,function(erro:any){
