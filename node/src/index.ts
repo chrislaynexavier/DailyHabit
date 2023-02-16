@@ -42,9 +42,22 @@ app.post('/dailyhabit', async (req:any, res: any) => {
     await client.end()
 })
 
-
 app.get('/dailyhabit', async (req:any, res:any) => {
     const dbResponse = await client.query('select * from dailyHabit')
+    res.json(dbResponse.rows)
+    console.log(dbResponse.rows)
+    console.log('teste')
+    await client.end()
+})
+
+app.post('/user', async (req:any, res:any) => {
+    await client.query('insert into users (nameUser, passwordUser) values ($1, $2)', [req.body.name, req.body.password])
+    res.json({req: 'user added sussfully'})
+    await client.end()
+})
+
+app.get('/user', async (req:any, res:any) => {
+    const dbResponse = await client.query('select * from users')
     res.json(dbResponse.rows)
     console.log(dbResponse.rows)
     console.log('teste')
