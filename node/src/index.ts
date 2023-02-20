@@ -64,6 +64,19 @@ app.get('/user', async (req:any, res:any) => {
     await client.end()
 })
 
+app.post('/group', async (req:any, res:any) => {
+    await client.query('insert into groups (namegroup) values ($1)', [req.body.name])
+    res.json({req: 'group added sussfully'})
+    await client.end()
+})
+
+app.get('/group', async (req:any, res: any) => {
+    const dbResponse = await client.query('select * from groups')
+    res.json(dbResponse.rows)
+    console.log(dbResponse.rows)
+    await client.end()
+})
+
 app.listen(2000,function(erro:any){
     if(erro){
         console.log("Ocorreu um erro!")

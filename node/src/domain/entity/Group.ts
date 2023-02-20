@@ -18,6 +18,7 @@ export class Group {
 
     addUser(user: User){
         this.users.push(user)
+        user.groups.push(this)
     }
 
     addDailyHabit(dailyHabit: DailyHabit, habit: Habit){
