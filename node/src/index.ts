@@ -52,7 +52,7 @@ app.get('/dailyhabit', async (req:any, res:any) => {
 
 app.post('/user', async (req:any, res:any) => {
     await client.query('insert into users (nameUser, passwordUser) values ($1, $2)', [req.body.name, req.body.password])
-    res.json({req: 'user added sussfully'})
+    res.json({req: 'user added sucessfully'})
     await client.end()
 })
 
@@ -66,7 +66,7 @@ app.get('/user', async (req:any, res:any) => {
 
 app.post('/group', async (req:any, res:any) => {
     await client.query('insert into groups (namegroup) values ($1)', [req.body.name])
-    res.json({req: 'group added sussfully'})
+    res.json({req: 'group added sucessfully'})
     await client.end()
 })
 
@@ -74,6 +74,18 @@ app.get('/group', async (req:any, res: any) => {
     const dbResponse = await client.query('select * from groups')
     res.json(dbResponse.rows)
     console.log(dbResponse.rows)
+    await client.end()
+})
+
+app.post('/add_user_group', async (req:any, res:any) => {
+    await client.query('insert into relation_user_group (id_user, id_group) values ($1, $2)', [req.body.id_user, req.body.id_group])
+    res.json({req: 'user added in group sucessfully'})
+    await client.end()
+})
+
+app.get('/add_user_group', async (req:any, res:any) => {
+    const dbResponse = await client.query('select * from relation_user_group')
+    res.json(dbResponse.rows)
     await client.end()
 })
 
