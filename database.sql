@@ -8,3 +8,5 @@ alter table users add column id_group int;
 alter table habits add column id_group int;
 create table groups (id serial primary key, namegroup varchar (255) not null);
 select * from groups;
+alter table dailyhabit add column checked bit not null;
+create table relation_user_group (id serial primary key, id_user int not null, id_group int not null);
