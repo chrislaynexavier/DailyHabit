@@ -30,8 +30,13 @@ app.post('/habit', async (req:any, res:any) => {
 })
 
 app.get('/habit', async (req:any, res:any) => {
-    const dbResponse = await client.query('select * from habits')
-    res.json(dbResponse.rows)
+    let response = null
+    if (req.query.id_group){
+        response = await client.query('select * from habits where id_group = $1', [req.query.id_group])
+    }else{
+        response = await client.query('select * from habits')
+    }
+    res.json(response.rows)
     // await client.end()
     
 })
