@@ -23,48 +23,54 @@ const connectDb = async () => {
 
 app.use(express.json())
 
-app.post('/habit', async (req:any, res:any) => {
+app.post('/habit', async (req: any, res: any) => {
     await client.query(`insert into habits (name) values ($1)`, [req.body.name])
-    res.json({req: 'habit added sucessfully'})
+    res.json({ req: 'habit added sucessfully' })
     // await client.end()
 })
 
-app.get('/habit', async (req:any, res:any) => {
+app.get('/habit', async (req: any, res: any) => {
     let response = null
-    if (req.query.id_group){
+    if (req.query.id_group) {
         response = await client.query('select * from habits where id_group = $1', [req.query.id_group])
-    }else{
+    } else {
         response = await client.query('select * from habits')
     }
     res.json(response.rows)
     // await client.end()
-    
+
 })
 
-app.post('/dailyhabit', async (req:any, res: any) => {
+app.post('/dailyhabit', async (req: any, res: any) => {
     await client.query('insert into dailyHabit (dailyhabit_date, id_user, id_habit, id_group, checked) values ($1, $2, $3, $4, $5)', [req.body.date, req.body.id_user, req.body.id_habit, req.body.id_group, 0])
-    res.json({req: 'daily habit added sucessfully'})
+    res.json({ req: 'daily habit added sucessfully' })
     // await client.end()
 })
 
-app.get('/dailyhabit', async (req:any, res:any) => {
+app.get('/dailyhabit', async (req: any, res: any) => {
     let response = null
-    if (req.query.id_user){
-        response = await client.query('select * from dailyHabit where id_user = $1', [req.query.id_user])
-    }else{
+    if (req.query.id_user) {
+        response = await client.query('select * from dailyhabit where id_user = $1', [req.query.id_user])
+    } else if (req.query.id_group) {
+        response = await client.query('select * from dailyhabit where id_group = $1', [req.query.id_group])
+    } else if (req.query.id_habit) {
+        response = await client.query('select * from dailyhabit where id_habit = $1', [req.query.id_habit])
+    } else if (req.query.checked) {
+        response = await client.query('select * from dailyhabit where checked = $1', [req.query.checked])
+    } else {
         response = await client.query('select * from dailyHabit')
     }
     res.json(response.rows)
     // await client.end()
 })
 
-app.post('/user', async (req:any, res:any) => {
+app.post('/user', async (req: any, res: any) => {
     await client.query('insert into users (nameUser, passwordUser) values ($1, $2)', [req.body.name, req.body.password])
-    res.json({req: 'user added sucessfully'})
+    res.json({ req: 'user added sucessfully' })
     // await client.end()
 })
 
-app.get('/user', async (req:any, res:any) => {
+app.get('/user', async (req: any, res: any) => {
     const dbResponse = await client.query('select * from users')
     res.json(dbResponse.rows)
     console.log(dbResponse.rows)
@@ -72,35 +78,35 @@ app.get('/user', async (req:any, res:any) => {
     // await client.end()
 })
 
-app.post('/group', async (req:any, res:any) => {
+app.post('/group', async (req: any, res: any) => {
     await client.query('insert into groups (namegroup) values ($1)', [req.body.name])
-    res.json({req: 'group added sucessfully'})
+    res.json({ req: 'group added sucessfully' })
     // await client.end()
 })
 
-app.get('/group', async (req:any, res: any) => {
+app.get('/group', async (req: any, res: any) => {
     const dbResponse = await client.query('select * from groups')
     res.json(dbResponse.rows)
     console.log(dbResponse.rows)
     // await client.end()
 })
 
-app.post('/add_user_group', async (req:any, res:any) => {
+app.post('/add_user_group', async (req: any, res: any) => {
     await client.query('insert into relation_user_group (id_user, id_group) values ($1, $2)', [req.body.id_user, req.body.id_group])
-    res.json({req: 'user added in group sucessfully'})
+    res.json({ req: 'user added in group sucessfully' })
     // await client.end()
 })
 
-app.get('/add_user_group', async (req:any, res:any) => {
+app.get('/add_user_group', async (req: any, res: any) => {
     const dbResponse = await client.query('select * from relation_user_group')
     res.json(dbResponse.rows)
     // await client.end()
 })
 
-app.listen(2000,function(erro:any){
-    if(erro){
+app.listen(2000, function (erro: any) {
+    if (erro) {
         console.log("Ocorreu um erro!")
-    }else{
+    } else {
         connectDb()
         console.log("Servidor iniciado com sucesso")
     }
