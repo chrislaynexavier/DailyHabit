@@ -40,6 +40,24 @@ app.get('/habit', async (req: any, res: any) => {
     // await client.end()
 
 })
+app.delete('/habit', async (req: any, res: any) => {
+    let response = null
+    let rows_delete = null
+    if(req.body.id){
+        response = await client.query('delete from habits where id = $1 returning *', [req.body.id], (err:any, result:any) => {
+            if (err) {
+                res.status(500).send('error deleting habit')
+            } else {
+                const numLines = result.rowCount;
+                if (numLines === 0) {
+                    res.status(404).send("No habit found for deletion.");
+                } else {
+                    res.status(200).send(`${numLines} habit(s) deleted.`);
+                }
+            }
+        })
+    }
+})
 
 app.post('/dailyhabit', async (req: any, res: any) => {
     await client.query('insert into dailyHabit (dailyhabit_date, id_user, id_habit, id_group, checked) values ($1, $2, $3, $4, $5)', [req.body.date, req.body.id_user, req.body.id_habit, req.body.id_group, 0])
