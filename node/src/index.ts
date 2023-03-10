@@ -40,9 +40,9 @@ app.get('/habit', async (req: any, res: any) => {
     // await client.end()
 
 })
+
 app.delete('/habit', async (req: any, res: any) => {
     let response = null
-    let rows_delete = null
     if(req.body.id){
         response = await client.query('delete from habits where id = $1 returning *', [req.body.id], (err:any, result:any) => {
             if (err) {
@@ -80,6 +80,24 @@ app.get('/dailyhabit', async (req: any, res: any) => {
     }
     res.json(response.rows)
     // await client.end()
+})
+
+app.delete('/dailyhabit', async (req: any, res: any) => {
+    let response = null
+    if(req.body.id){
+        response = await client.query('delete from dailyhabit where id = $1 returning *', [req.body.id], (err:any, result:any) => {
+            if (err) {
+                res.status(500).send('error deleting daily habit')
+            } else {
+                const numLines = result.rowCount;
+                if (numLines === 0) {
+                    res.status(404).send("No daily habit found for deletion.");
+                } else {
+                    res.status(200).send(`${numLines} daily habit(s) deleted.`);
+                }
+            }
+        })
+    }
 })
 
 app.post('/user', async (req: any, res: any) => {
