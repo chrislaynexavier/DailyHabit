@@ -1,3 +1,4 @@
+import { Resolver } from "dns"
 import { DailyHabit } from "./domain/entity/DailyHabit"
 import { Habit } from "./domain/entity/Habit"
 
@@ -39,6 +40,26 @@ app.get('/habit', async (req: any, res: any) => {
     res.json(response.rows)
     // await client.end()
 
+})
+
+app.put('/habit',async (req: any, res: any) => {
+    let response = null
+    if(isNaN(req.query.id_habit)){
+        res.status(404).send('the id need be a number')
+    }else {
+        response = await client.query('UPDATE habits SET name = $1 WHERE id = $2 RETURNING *', [req.query.name, req.query.id_habit], (err:any, result:any) => {
+            if (err) {
+                res.status(500).send('error editing habit')
+            } else {
+                if(result.rowCount === 0) {
+                    res.status(404).send("No habit found to edit.");
+                }else{
+                    res.status(200).send('Successfully edited habit')
+
+                }
+            }
+        })
+    }
 })
 
 app.delete('/habit', async (req: any, res: any) => {
