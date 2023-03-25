@@ -47,12 +47,12 @@ app.put('/habit',async (req: any, res: any) => {
     if(isNaN(req.query.id_habit)){
         res.status(404).send('the id need be a number')
     }else {
-        response = await client.query('UPDATE habits SET name = $1 WHERE id = $2 RETURNING *', [req.query.name, req.query.id_habit], (err:any, result:any) => {
+        response = await client.query('update habits set name = $1 WHERE id = $2 returning *', [req.query.name, req.query.id_habit], (err:any, result:any) => {
             if (err) {
                 res.status(500).send('error editing habit')
             } else {
                 if(result.rowCount === 0) {
-                    res.status(404).send("No habit found to edit.");
+                    res.status(404).send("No habit found to edit.")
                 }else{
                     res.status(200).send('Successfully edited habit')
 
@@ -71,9 +71,9 @@ app.delete('/habit', async (req: any, res: any) => {
             } else {
                 const numLines = result.rowCount;
                 if (numLines === 0) {
-                    res.status(404).send("No habit found for deletion.");
+                    res.status(404).send("No habit found for deletion.")
                 } else {
-                    res.status(200).send(`${numLines} habit(s) deleted.`);
+                    res.status(200).send(`${numLines} habit(s) deleted.`)
                 }
             }
         })
@@ -81,10 +81,30 @@ app.delete('/habit', async (req: any, res: any) => {
 })
 
 app.post('/dailyhabit', async (req: any, res: any) => {
-    await client.query('insert into dailyHabit (dailyhabit_date, id_user, id_habit, id_group, checked) values ($1, $2, $3, $4, $5)', [req.body.date, req.body.id_user, req.body.id_habit, req.body.id_group, 0])
+    await client.query('insert into dailyHabit (dailyhabit_date, id_user, id_habit, id_group, checked) values ($1, $2, $3, $4, $5)', [req.body.date, req.body.id_user, req.body.id_habit, req.body.id_group, false])
     res.json({ req: 'daily habit added sucessfully' })
     // await client.end()
 })
+
+app.put('/dailyhabit', async (req: any, res: any) => {
+    try {
+      const id = parseInt(req.query.id_dailyhabit)
+      if (isNaN(id)) {
+        res.status(400).send('id must be a number')
+        return;
+      }
+      const result = await client.query('UPDATE dailyhabit SET checked = NOT checked WHERE id = $1 RETURNING *', [id])
+      if (result.rowCount === 0) {
+        res.status(404).send(`Daily habit with id ${id} not found`)
+      } else {
+        const updatedDailyHabit = result.rows[0].checked
+        res.status(200).send(`Successfully updated daily habit ${id}, checked: ${updatedDailyHabit}`)
+      }
+    } catch (err) {
+      console.error(err)
+      res.status(500).send('Error editing daily habit')
+    }
+  })
 
 app.get('/dailyhabit', async (req: any, res: any) => {
     let response = null
@@ -112,9 +132,9 @@ app.delete('/dailyhabit', async (req: any, res: any) => {
             } else {
                 const numLines = result.rowCount;
                 if (numLines === 0) {
-                    res.status(404).send("No daily habit found for deletion.");
+                    res.status(404).send("No daily habit found for deletion.")
                 } else {
-                    res.status(200).send(`${numLines} daily habit(s) deleted.`);
+                    res.status(200).send(`${numLines} daily habit(s) deleted.`)
                 }
             }
         })
